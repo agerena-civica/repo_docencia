@@ -48,7 +48,7 @@ models:
     staging:
       # Staging: curación inicial. Vistas, sin coste de almacenamiento.
       +materialized: view
-      +database: "{{ env_var('DBT_SILVER_DB', target.database) }}"
+      +database: "{{ env_var('DBT_BRONZE_DB', target.database) }}"
       +schema: staging
 
     silver:
@@ -81,8 +81,11 @@ snapshots:
   +target_schema: snapshots
 
 # ----------------------------------------------------------------------------
-# Tests: por defecto error, sin store_failures. Se gradúa por test (ver día 4).
+# Data tests: por defecto error, sin store_failures, y warehouse explícito en
+# Snowflake para no depender del estado de la sesión.
 # ----------------------------------------------------------------------------
-tests:
+data_tests:
   +store_failures: false
   +severity: error
+  +snowflake_warehouse: "WH_BASICO"
+
